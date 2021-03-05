@@ -80,11 +80,11 @@ public class GenresActivity extends AppCompatActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void initUI() {
-        buttonGenresSave = findViewById(R.id.buttonGenresSave);
-        buttonGenresDelete = findViewById(R.id.buttonGenresDelete);
-        buttonGenresAddNew = findViewById(R.id.buttonGenresAddNew);
+        buttonGenresSave = findViewById(R.id.buttonYearsSave);
+        buttonGenresDelete = findViewById(R.id.buttonYearsDelete);
+        buttonGenresAddNew = findViewById(R.id.buttonYearsAddNew);
         editTextGenreName = findViewById(R.id.editTextGenreName);
-        spinnerGenres = findViewById(R.id.spinnerGenres);
+        spinnerGenres = findViewById(R.id.spinnerYears);
 
         buttonGenresSave.setOnClickListener(new View.OnClickListener() {
             @Override

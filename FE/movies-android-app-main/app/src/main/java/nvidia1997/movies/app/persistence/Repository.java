@@ -124,7 +124,7 @@ public abstract class Repository<T> extends Context {
                                 List<T> dtos = Arrays.asList(parseJsonArray(response.toString()));
                                 onSuccess.accept(dtos);
                             } catch (Exception error) {
-                                Log.d(getGeneralErrorId(), error.getMessage());
+                                Log.d(getGeneralErrorId(), " " + error.getMessage());
                             }
                         },
 
