@@ -6,4 +6,77 @@
     android:layout_height="match_parent"
     tools:context=".GenresActivity">
 
+    <EditText
+        android:id="@+id/editTextGenreName"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:editable="true"
+        android:enabled="true"
+        android:text="url"
+        app:layout_constraintBottom_toTopOf="@+id/buttonGenresSave"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/spinnerGenres" />
+
+    <Button
+        android:id="@+id/buttonGenresSave"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Save"
+        app:backgroundTint="#FFC107"
+        app:layout_constraintBottom_toBottomOf="@+id/buttonGenresDelete"
+        app:layout_constraintEnd_toStartOf="@+id/buttonGenresAddNew"
+        app:layout_constraintStart_toEndOf="@+id/buttonGenresDelete" />
+
+    <Button
+        android:id="@+id/buttonGenresDelete"
+        android:layout_width="0dp"
+        android:layout_height="46dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="Delete"
+        app:backgroundTint="#EA0606"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/buttonGenresAddNew"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:text="Add new"
+        app:backgroundTint="#378C2D"
+        app:layout_constraintBottom_toBottomOf="@+id/buttonGenresSave"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <Spinner
+        android:id="@+id/spinnerGenres"
+        android:layout_width="0dp"
+        android:layout_height="59dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:spinnerMode="dialog"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextMoviePosterUrl" />
+
+    <TextView
+        android:id="@+id/textViewGenreName"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginBottom="8dp"
+        android:text="Genre name:"
+        app:layout_constraintBottom_toTopOf="@+id/editTextGenreName"
+        app:layout_constraintStart_toStartOf="@+id/editTextGenreName" />
 </androidx.constraintlayout.widget.ConstraintLayout>

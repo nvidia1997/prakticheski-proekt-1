@@ -69,6 +69,12 @@ public class MoviesActivity extends AppCompatActivity {
 
                 unitOfWork.getMovieRepository().findAll(movies1 -> {
                     movies = movies1;
+                    if (movies.size() == 0) {
+                        Movie _movie = new Movie();
+                        _movie.setReleaseYear(years.get(0));
+                        _movie.setGenre(genres.get(0));
+                        movies.add(_movie);
+                    }
                     updateUI();
                 });
             });
@@ -247,11 +253,9 @@ public class MoviesActivity extends AppCompatActivity {
     }
 
     private Movie getCurrentMovie() {
-        if (movies.size() > 0) {
-            return movies.get(activeMovieIndex);
-        }
-
-        return null;
+        return movies != null && movies.size() > 0
+                ? movies.get(activeMovieIndex)
+                : null;
     }
 
     private void deleteDialog() {
@@ -267,7 +271,6 @@ public class MoviesActivity extends AppCompatActivity {
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "Deleting in progress.....", Toast.LENGTH_LONG).show();
                 unitOfWork.getMovieRepository().removeById(getCurrentMovie().getId(), o -> {
                     if (activeMovieIndex - 1 <= 0) {
                         activeMovieIndex++;
@@ -277,6 +280,7 @@ public class MoviesActivity extends AppCompatActivity {
 
                     refresh();
                     dialog.hide();
+                    Toast.makeText(getApplicationContext(), "Deleted !", Toast.LENGTH_SHORT).show();
                 });
             }
         });

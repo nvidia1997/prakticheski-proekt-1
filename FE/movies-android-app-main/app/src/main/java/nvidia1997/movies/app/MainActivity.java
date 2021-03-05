@@ -9,6 +9,8 @@ import android.widget.Button;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import nvidia1997.movies.app.persistence.UnitOfWork;
+
 public class MainActivity extends AppCompatActivity {
 
     Button buttonShowMovies;
@@ -20,10 +22,32 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         initUI();
     }
 
+    @Override
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    protected void onResume() {
+        super.onResume();
+
+        updateMoviesButtonState();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void updateMoviesButtonState() {
+        UnitOfWork unitOfWork = new UnitOfWork();
+        unitOfWork.getGenreRepository().findAll(genres1 -> {
+            unitOfWork.getYearRepository().findAll(years1 -> {
+                buttonShowMovies.setEnabled(genres1.size() > 0 && years1.size() > 0);
+            });
+        });
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
     private void initUI() {
+        updateMoviesButtonState();
+
         View.OnClickListener onClick = new View.OnClickListener() {
 
             @Override

@@ -60,13 +60,15 @@ public class MovieController {
     @PutMapping(path = "/movies")
     @CrossOrigin(origins = Constants.ORIGINS, exposedHeaders = {Constants.EXPOSED_HEADERS})
     @ResponseBody
-    public void editOrCreate(@RequestBody Movie movie) {
+    public Movie editOrCreate(@RequestBody Movie movie) {
         movieRepo.save(movie);
+        return movie;
     }
 
     @DeleteMapping(path = "/movies/{id}")
     @CrossOrigin(origins = Constants.ORIGINS, exposedHeaders = {Constants.EXPOSED_HEADERS})
-    public void deleteById(@PathVariable int id) {
+    public int deleteById(@PathVariable int id) {
         movieRepo.deleteById(id);
+        return id;
     }
 }

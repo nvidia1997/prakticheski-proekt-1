@@ -34,14 +34,16 @@ public class YearController {
     @PutMapping(path = "/years")
     @CrossOrigin(origins = Constants.ORIGINS, exposedHeaders = {Constants.EXPOSED_HEADERS})
     @ResponseBody
-    public void editOrCreate(@RequestBody Year year) {
+    public Year editOrCreate(@RequestBody Year year) {
         yearRepo.save(year);
+        return year;
     }
 
     @DeleteMapping(path = "/years/{id}")
     @CrossOrigin(origins = Constants.ORIGINS, exposedHeaders = {Constants.EXPOSED_HEADERS})
-    public void deleteById(@PathVariable int id) {
+    public int deleteById(@PathVariable int id) {
         yearRepo.deleteById(id);
+        return id;
     }
 }
 

@@ -31,14 +31,16 @@ public class GenreController {
 
     @PutMapping(path = "/genres", consumes = "application/json")
     @CrossOrigin(origins = Constants.ORIGINS, exposedHeaders = {Constants.EXPOSED_HEADERS})
-    public void editOrCreate(@RequestBody Genre genre) {
+    public Genre editOrCreate(@RequestBody Genre genre) {
         genreRepo.save(genre);
+        return genre;
     }
 
     @DeleteMapping(path = "/genres/{id}")
     @CrossOrigin(origins = Constants.ORIGINS, exposedHeaders = {Constants.EXPOSED_HEADERS})
-    public void deleteById(@PathVariable int id) {
+    public int deleteById(@PathVariable int id) {
         genreRepo.deleteById(id);
+        return id;
     }
 }
 

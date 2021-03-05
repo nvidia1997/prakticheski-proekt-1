@@ -6,8 +6,10 @@ import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
@@ -15,8 +17,11 @@ import com.android.volley.toolbox.Volley;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 
+import org.json.JSONObject;
+
 import java.lang.reflect.ParameterizedType;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -39,19 +44,7 @@ public abstract class Repository<T> extends Context {
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void add(T dto, Consumer onSuccess) {
-        String url = API + getEndpoint();
-        StringRequest postRequest = new StringRequest(Request.Method.POST, url,
-                response -> {
-                    onSuccess.accept(null);
-                },
-                error -> Log.d(getGeneralErrorId(), error.getMessage())
-        ) {
-            @Override
-            protected Map<String, String> getParams() {
-                return parseObjectForRequestBody(dto);
-            }
-        };
-        _queue.add(postRequest);
+        update(dto, onSuccess);// on API we 're creating new record if the item has no id
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -70,19 +63,24 @@ public abstract class Repository<T> extends Context {
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void update(T dto, Consumer onSuccess) {
         String url = API + getEndpoint();
-        StringRequest putRequest = new StringRequest(Request.Method.PUT, url,
+        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.PUT,
+                url, new JSONObject(parseObjectForRequestBody(dto)),
                 response -> {
                     onSuccess.accept(null);
                 },
-                error -> Log.d(getGeneralErrorId(), error.getMessage())
-        ) {
+                error -> {
+                    VolleyLog.d(getGeneralErrorId(), "Error: " + error.getMessage());
+                }) {
+
             @Override
-            protected Map<String, String> getParams() {
-                return parseObjectForRequestBody(dto);
+            public Map<String, String> getHeaders() {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Content-Type", "application/json; charset=utf-8");
+                return headers;
             }
         };
 
-        _queue.add(putRequest);
+        _queue.add(jsonObjReq);
     }
 
     protected Map<String, String> parseObjectForRequestBody(T dto) {
@@ -139,4 +137,11 @@ public abstract class Repository<T> extends Context {
     }
 
     protected abstract T[] parseJsonArray(String jsonArray);
+
+    protected Map<String, String> createHeaders() throws AuthFailureError {
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("Accept", "application/json");
+        params.put("Content-Type", "application/json");
+        return params;
+    }
 }

@@ -2,20 +2,22 @@ package com.moviesaapi.movie;
 
 import com.moviesaapi.genre.Genre;
 import com.moviesaapi.year.Year;
+import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
 
 @Entity
 public class Movie {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
     private Genre genre = new Genre();
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
     private Year releaseYear = new Year();
 
     @Column(length = 500, nullable = false)
