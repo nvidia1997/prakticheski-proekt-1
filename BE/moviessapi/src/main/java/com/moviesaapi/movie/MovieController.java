@@ -41,9 +41,8 @@ public class MovieController {
 
             movies = movies
                     .stream()
-                    .filter(movie -> movie
-                            .getGenres()
-                            .containsAll(selectedGenres))
+                    .filter(movie -> selectedGenres.contains(movie.getGenre())
+                    )
                     .collect(Collectors.toList());
         }
 
@@ -53,10 +52,9 @@ public class MovieController {
     @GetMapping(path = "/movies/{id}", produces = "application/json")
     @CrossOrigin(origins = Constants.ORIGINS, exposedHeaders = {Constants.EXPOSED_HEADERS})
     @ResponseBody
-    public Movie findById(@PathVariable int id) {
+    public Optional<Movie> findById(@PathVariable int id) {
         return movieRepo
-                .findById(id)
-                .orElse(new Movie());
+                .findById(id);
     }
 
     @PutMapping(path = "/movies")

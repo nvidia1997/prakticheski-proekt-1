@@ -1,8 +1,5 @@
 package nvidia1997.movies.app;
 
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.Dialog;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,16 +13,17 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-import nvidia1997.movies.app.core.genre.GenreDomain;
-import nvidia1997.movies.app.core.movie.MovieDomain;
-import nvidia1997.movies.app.core.year.YearDomain;
-import nvidia1997.movies.app.persistence.genre.GenreRepository;
-import nvidia1997.movies.app.persistence.movie.MovieRepository;
-import nvidia1997.movies.app.persistence.year.YearRepository;
+import nvidia1997.movies.app.core.genre.Genre;
+import nvidia1997.movies.app.core.movie.Movie;
+import nvidia1997.movies.app.core.year.Year;
+import nvidia1997.movies.app.persistence.UnitOfWork;
 
 public class MoviesActivity extends AppCompatActivity {
     ImageView imageViewMoviePoster;
@@ -43,12 +41,10 @@ public class MoviesActivity extends AppCompatActivity {
     TextView textViewMoviesCount;
     int activeMovieIndex = 0;
 
-    List<MovieDomain> movieDomains;
-    List<YearDomain> yearDomains;
-    List<GenreDomain> genreDomains;
-    MovieRepository movieRepository;
-    GenreRepository genreRepository;
-    YearRepository yearRepository;
+    List<Movie> movies;
+    List<Year> years;
+    List<Genre> genres;
+    UnitOfWork unitOfWork;
 
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -56,73 +52,70 @@ public class MoviesActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movies);
-        movieRepository = new MovieRepository(this);
-        genreRepository = new GenreRepository(this);
-        yearRepository = new YearRepository(this);
+        unitOfWork = new UnitOfWork();
         loadData();
         initUI();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void loadData() {
-        movieDomains = movieRepository.findAll();
-        genreDomains = genreRepository.findAll();
-        yearDomains = yearRepository.findAll();
+        unitOfWork.getGenreRepository().findAll(genres1 -> {
+            genres = genres1;
+            populateGenreSpinner();
+
+            unitOfWork.getYearRepository().findAll(years1 -> {
+                years = years1;
+                populateYearSpinner();
+
+                unitOfWork.getMovieRepository().findAll(movies1 -> {
+                    movies = movies1;
+                    updateUI();
+                });
+            });
+        });
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void updateUI() {
-        int _movieDomainsCount = movieDomains.size();
-        textViewMoviesSelectedNumber.setText(Integer.valueOf(activeMovieIndex + 1).toString());
-        textViewMoviesCount.setText(Integer.valueOf(_movieDomainsCount).toString());
+        int _moviesCount = movies.size();
+        buttonMoviePrev.setEnabled(_moviesCount > 0 && activeMovieIndex > 0);
+        buttonMovieNext.setEnabled(activeMovieIndex < _moviesCount - 1);
+        buttonMovieDelete.setEnabled(_moviesCount > 0);
+        buttonMoviesSave.setEnabled(_moviesCount > 0);
 
-        MovieDomain _currentMovie = getCurrentMovie();
+        if (_moviesCount == 0) {
+            return;
+        }
+
+        textViewMoviesSelectedNumber.setText(Integer.valueOf(activeMovieIndex + 1).toString());
+        textViewMoviesCount.setText(Integer.valueOf(_moviesCount).toString());
+
+        Movie _currentMovie = getCurrentMovie();
 
         editTextMovieTitle.setText(_currentMovie.getTitle());
         editTextMoviePosterUrl.setText(_currentMovie.getPosterUrl());
         editTextMultilineMovieOverview.setText(_currentMovie.getOverview());
 
-        GenreDomain _currentGenre = null;
-        for (GenreDomain genreDomain : genreDomains) {
-            if (genreDomain.getId().equals(_currentMovie.getGenreId())) {
-                _currentGenre = genreDomain;
-            }
-        }
-        if (_currentGenre != null) {
-            int _currentGenreIndex = genreDomains.indexOf(_currentGenre);
-            if (_currentGenreIndex >= 0) {
-                spinnerMovieYear.setSelection(_currentGenreIndex, true);
-            }
-        }
-
-        YearDomain _currentYear = null;
-        for (YearDomain yearDomain : yearDomains) {
-            if (yearDomain.getId() == _currentMovie.getReleaseYearId()) {
-                _currentYear = yearDomain;
-            }
-        }
-        if (_currentYear != null) {
-            int _currentYearIndex = yearDomains.indexOf(_currentYear);
-            if (_currentYearIndex >= 0) {
-                spinnerMovieYear.setSelection(_currentYearIndex, true);
-            }
-        }
+        spinnerMovieYear.setSelection(genres.indexOf(_currentMovie.getGenre()));
+        spinnerMovieYear.setSelection(years.indexOf(_currentMovie.getReleaseYear()));
 
         Picasso
                 .get()
                 .load(_currentMovie.getPosterUrl())
                 .into(imageViewMoviePoster);
-
-        buttonMoviePrev.setEnabled(_movieDomainsCount > 0 && activeMovieIndex > 0);
-        buttonMovieNext.setEnabled(activeMovieIndex < _movieDomainsCount - 1);
     }
 
-    private MovieDomain getUIDataAsMovie() {
-        MovieDomain movieDomain = getCurrentMovie();
-        movieDomain.setPosterUrl(editTextMoviePosterUrl.getText().toString());
-        movieDomain.setTitle(editTextMovieTitle.getText().toString());
-        movieDomain.setOverview(editTextMultilineMovieOverview.getText().toString());
+    private Movie getUIDataAsMovie() {
+        Movie _movie = getCurrentMovie();
+        if (_movie == null) {
+            _movie = new Movie();
+        }
 
-        return movieDomain;
+        _movie.setPosterUrl(editTextMoviePosterUrl.getText().toString());
+        _movie.setTitle(editTextMovieTitle.getText().toString());
+        _movie.setOverview(editTextMultilineMovieOverview.getText().toString());
+
+        return _movie;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -142,7 +135,7 @@ public class MoviesActivity extends AppCompatActivity {
         buttonMoviePrev.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (movieDomains.size() > 0 && activeMovieIndex > 0) {
+                if (movies.size() > 0 && activeMovieIndex > 0) {
                     activeMovieIndex--;
                     updateUI();
                 }
@@ -152,17 +145,18 @@ public class MoviesActivity extends AppCompatActivity {
         buttonMoviesSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MovieDomain _currentMovie = getUIDataAsMovie();
-                movieRepository.update(_currentMovie);
-                Toast.makeText(getApplicationContext(), "Saved !", Toast.LENGTH_LONG).show();
-                refresh();
+                Movie _currentMovie = getUIDataAsMovie();
+                unitOfWork.getMovieRepository().update(_currentMovie, o -> {
+                    Toast.makeText(getApplicationContext(), "Saved !", Toast.LENGTH_LONG).show();
+                    refresh();
+                });
             }
         });
 
         buttonMovieNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (activeMovieIndex < movieDomains.size() - 1) {
+                if (activeMovieIndex < movies.size() - 1) {
                     activeMovieIndex++;
                     updateUI();
                 }
@@ -174,35 +168,34 @@ public class MoviesActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 getCurrentMovie()
-                        .setGenreId(genreDomains.get(position).getId());
+                        .setGenre(genres.get(position));
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
-        populateGenreSpinner();
 
         spinnerMovieYear = findViewById(R.id.spinnerMovieYear);
         spinnerMovieYear.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 getCurrentMovie()
-                        .setReleaseYearId(yearDomains.get(position).getId());
+                        .setReleaseYear(years.get(position));
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
-        populateYearSpinner();
 
         buttonMovieAddNew.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                movieRepository.add(getUIDataAsMovie());
-                Toast.makeText(getApplicationContext(), "Added a copy as last element", Toast.LENGTH_LONG).show();
-                refresh();
+                unitOfWork.getMovieRepository().add(getUIDataAsMovie(), o -> {
+                    Toast.makeText(getApplicationContext(), "Added a copy as last element", Toast.LENGTH_LONG).show();
+                    refresh();
+                });
             }
         });
 
@@ -212,13 +205,11 @@ public class MoviesActivity extends AppCompatActivity {
                 deleteDialog();
             }
         });
-
-        updateUI();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void populateGenreSpinner() {
-        String[] genreNames = genreDomains
+        String[] genreNames = genres
                 .stream()
                 .map(g -> g.getName())
                 .toArray(String[]::new);
@@ -228,7 +219,7 @@ public class MoviesActivity extends AppCompatActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void populateYearSpinner() {
-        String[] yearValues = yearDomains
+        String[] yearValues = years
                 .stream()
                 .map(g -> {
                             Integer a = g.getValue();
@@ -243,9 +234,9 @@ public class MoviesActivity extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.N)
 
     private void refresh() {
-        int oldMoviesSize = movieDomains.size();
+        int oldMoviesSize = movies.size();
         loadData();
-        int newMoviesSize = movieDomains.size();
+        int newMoviesSize = movies.size();
         if (oldMoviesSize < newMoviesSize) {
             activeMovieIndex = newMoviesSize - 1;
         }
@@ -255,8 +246,12 @@ public class MoviesActivity extends AppCompatActivity {
         updateUI();
     }
 
-    private MovieDomain getCurrentMovie() {
-        return movieDomains.get(activeMovieIndex);
+    private Movie getCurrentMovie() {
+        if (movies.size() > 0) {
+            return movies.get(activeMovieIndex);
+        }
+
+        return null;
     }
 
     private void deleteDialog() {
@@ -273,15 +268,16 @@ public class MoviesActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getApplicationContext(), "Deleting in progress.....", Toast.LENGTH_LONG).show();
-                movieRepository.removeById(getCurrentMovie().getId());
-                if (activeMovieIndex - 1 <= 0) {
-                    activeMovieIndex++;
-                } else {
-                    activeMovieIndex--;
-                }
+                unitOfWork.getMovieRepository().removeById(getCurrentMovie().getId(), o -> {
+                    if (activeMovieIndex - 1 <= 0) {
+                        activeMovieIndex++;
+                    } else {
+                        activeMovieIndex--;
+                    }
 
-                refresh();
-                dialog.hide();
+                    refresh();
+                    dialog.hide();
+                });
             }
         });
 

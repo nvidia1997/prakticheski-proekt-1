@@ -4,6 +4,7 @@ import com.moviesaapi.Constants;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class GenreController {
@@ -23,10 +24,9 @@ public class GenreController {
     @GetMapping(path = "/genres/{id}", produces = "application/json")
     @CrossOrigin(origins = Constants.ORIGINS, exposedHeaders = {Constants.EXPOSED_HEADERS})
     @ResponseBody
-    public Genre findById(@PathVariable int id) {
+    public Optional<Genre> findById(@PathVariable int id) {
         return genreRepo
-                .findById(id)
-                .orElse(new Genre());
+                .findById(id);
     }
 
     @PutMapping(path = "/genres", consumes = "application/json")

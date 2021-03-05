@@ -4,8 +4,6 @@ import com.moviesaapi.genre.Genre;
 import com.moviesaapi.year.Year;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 public class Movie {
@@ -14,8 +12,8 @@ public class Movie {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @OneToMany(fetch = FetchType.EAGER)
-    private List<Genre> genres = new ArrayList<>();
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Genre genre = new Genre();
 
     @ManyToOne(fetch = FetchType.EAGER)
     private Year releaseYear = new Year();
@@ -37,12 +35,12 @@ public class Movie {
         this.id = id;
     }
 
-    public List<Genre> getGenres() {
-        return genres;
+    public Genre getGenre() {
+        return genre;
     }
 
-    public void setGenres(List<Genre> genres) {
-        this.genres = genres;
+    public void setGenre(Genre genre) {
+        this.genre = genre;
     }
 
     public Year getReleaseYear() {

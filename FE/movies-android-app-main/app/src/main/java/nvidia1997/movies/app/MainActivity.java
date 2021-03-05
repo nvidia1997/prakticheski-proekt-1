@@ -1,19 +1,13 @@
 package nvidia1997.movies.app;
 
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-import nvidia1997.movies.app.persistence.genre.GenreRepository;
-import nvidia1997.movies.app.persistence.movie.MovieRepository;
-import nvidia1997.movies.app.persistence.year.YearRepository;
-import nvidia1997.movies.app.services.MoviesService;
-import nvidia1997.movies.app.services.YearsService;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -27,41 +21,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initUI();
-
-        MoviesService moviesService = new MoviesService();
-        YearsService yearsService = new YearsService();
-
-        YearRepository yearRepository = new YearRepository(this);
-        yearRepository.dropTableIfExists(yearRepository.getWritableDatabase(), false);
-        yearRepository.onCreate(yearRepository.getWritableDatabase());
-
-        GenreRepository genreRepository = new GenreRepository(this);
-        genreRepository.dropTableIfExists(genreRepository.getWritableDatabase(), false);
-        genreRepository.onCreate(genreRepository.getWritableDatabase());
-
-        MovieRepository movieRepository = new MovieRepository(this);
-        movieRepository.dropTableIfExists(movieRepository.getWritableDatabase(), false);
-        movieRepository.onCreate(movieRepository.getWritableDatabase());
-
-
-        yearsService.fetchYears((years) -> {
-            yearRepository.addMany(years);
-
-            moviesService.fetchGenres((genres) -> {
-                genreRepository.addMany(genres);
-
-                moviesService.fetchMovies(
-                        yearRepository,
-                        genreRepository,
-                        (movies) -> {
-                            movieRepository.addMany(movies);
-
-                            buttonShowMovies.setEnabled(true);
-                            buttonShowGenres.setEnabled(true);
-                            buttonShowYears.setEnabled(true);
-                        }, null);
-            });
-        });
     }
 
     private void initUI() {

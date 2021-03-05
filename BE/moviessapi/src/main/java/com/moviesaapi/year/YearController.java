@@ -4,6 +4,7 @@ import com.moviesaapi.Constants;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class YearController {
@@ -23,10 +24,9 @@ public class YearController {
     @GetMapping(path = "/years/{id}", produces = "application/json")
     @CrossOrigin(origins = Constants.ORIGINS, exposedHeaders = {Constants.EXPOSED_HEADERS})
     @ResponseBody
-    public Year findById(@PathVariable int id) {
+    public Optional<Year> findById(@PathVariable int id) {
         return yearRepo
-                .findById(id)
-                .orElse(new Year());
+                .findById(id);
 
 //        throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }

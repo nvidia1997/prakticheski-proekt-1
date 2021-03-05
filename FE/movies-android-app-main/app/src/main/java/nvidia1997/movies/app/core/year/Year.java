@@ -1,22 +1,11 @@
 package nvidia1997.movies.app.core.year;
 
-import nvidia1997.movies.app.core.Domain;
-
-public class YearDomain extends Domain<Integer> {
+public class Year {
     private int id;
 
     private int value;
 
-    public YearDomain() {
-        super();
-    }
-
-    public YearDomain(int value) {
-        super();
-        this.value = value;
-    }
-
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
@@ -32,4 +21,3 @@ public class YearDomain extends Domain<Integer> {
         this.value = value;
     }
 }
-

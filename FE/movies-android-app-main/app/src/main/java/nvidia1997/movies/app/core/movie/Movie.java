@@ -1,14 +1,15 @@
 package nvidia1997.movies.app.core.movie;
 
-import nvidia1997.movies.app.core.Domain;
+import nvidia1997.movies.app.core.genre.Genre;
+import nvidia1997.movies.app.core.year.Year;
 
-public class MovieDomain extends Domain<Integer> {
+public class Movie {
 
     private int id;
 
-    private int genreId;
+    private Genre genre = new Genre();
 
-    private int releaseYearId;
+    private Year releaseYear = new Year();
 
     private String posterUrl;
 
@@ -16,7 +17,7 @@ public class MovieDomain extends Domain<Integer> {
 
     private String overview;
 
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
@@ -24,20 +25,20 @@ public class MovieDomain extends Domain<Integer> {
         this.id = id;
     }
 
-    public Integer getGenreId() {
-        return genreId;
+    public Genre getGenre() {
+        return genre;
     }
 
-    public void setGenreId(Integer genreId) {
-        this.genreId = genreId;
+    public void setGenre(Genre genre) {
+        this.genre = genre;
     }
 
-    public int getReleaseYearId() {
-        return releaseYearId;
+    public Year getReleaseYear() {
+        return releaseYear;
     }
 
-    public void setReleaseYearId(int releaseYearId) {
-        this.releaseYearId = releaseYearId;
+    public void setReleaseYear(Year releaseYear) {
+        this.releaseYear = releaseYear;
     }
 
     public String getPosterUrl() {
@@ -64,4 +65,3 @@ public class MovieDomain extends Domain<Integer> {
         this.overview = overview;
     }
 }
-
