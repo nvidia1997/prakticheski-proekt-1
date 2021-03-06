@@ -1,5 +1,7 @@
 package com.moviesaapi.genre;
 
+import com.google.gson.Gson;
+
 import javax.persistence.*;
 
 @Entity
@@ -24,6 +26,20 @@ public class Genre {
     }
 
     public void setName(String name) {
+        this.name = name;
+    }
+
+    public Genre() {
+    }
+
+    public Genre(String json) {
+        Genre _genre = new Gson().fromJson(json, Genre.class);
+        this.id = _genre.getId();
+        this.name = _genre.getName();
+    }
+
+    public Genre(int id, String name) {
+        this.id = id;
         this.name = name;
     }
 }

@@ -6,7 +6,6 @@ import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyLog;
@@ -20,6 +19,7 @@ import com.google.gson.Gson;
 import org.json.JSONObject;
 
 import java.lang.reflect.ParameterizedType;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -122,7 +122,7 @@ public abstract class Repository<T> extends Context {
                         response -> {
                             try {
                                 List<T> dtos = Arrays.asList(parseJsonArray(response.toString()));
-                                onSuccess.accept(dtos);
+                                onSuccess.accept(new ArrayList<>(dtos));
                             } catch (Exception error) {
                                 Log.d(getGeneralErrorId(), " " + error.getMessage());
                             }
@@ -137,11 +137,4 @@ public abstract class Repository<T> extends Context {
     }
 
     protected abstract T[] parseJsonArray(String jsonArray);
-
-    protected Map<String, String> createHeaders() throws AuthFailureError {
-        Map<String, String> params = new HashMap<String, String>();
-        params.put("Accept", "application/json");
-        params.put("Content-Type", "application/json");
-        return params;
-    }
 }

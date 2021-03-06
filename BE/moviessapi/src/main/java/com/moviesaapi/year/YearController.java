@@ -1,6 +1,8 @@
 package com.moviesaapi.year;
 
 import com.moviesaapi.Constants;
+import com.moviesaapi.movie.Movie;
+import com.moviesaapi.movie.MovieRepo;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -9,9 +11,11 @@ import java.util.Optional;
 @RestController
 public class YearController {
     YearRepo yearRepo;
+    MovieRepo movieRepo;
 
-    YearController(YearRepo yearRepo) {
+    YearController(YearRepo yearRepo, MovieRepo movieRepo) {
         this.yearRepo = yearRepo;
+        this.movieRepo = movieRepo;
     }
 
     @GetMapping(path = "/years", produces = "application/json")
@@ -42,6 +46,8 @@ public class YearController {
     @DeleteMapping(path = "/years/{id}")
     @CrossOrigin(origins = Constants.ORIGINS, exposedHeaders = {Constants.EXPOSED_HEADERS})
     public int deleteById(@PathVariable int id) {
+        List<Movie> _moviesToDelete = movieRepo.findByReleaseYear_Id(id);
+        movieRepo.deleteAll(_moviesToDelete);
         yearRepo.deleteById(id);
         return id;
     }

@@ -12,21 +12,19 @@ public class Movie {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @Cascade(org.hibernate.annotations.CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     private Genre genre = new Genre();
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @Cascade(org.hibernate.annotations.CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     private Year releaseYear = new Year();
 
-    @Column(length = 500, nullable = false)
+    @Column(length = 25000, nullable = false)
     private String posterUrl;
 
     @Column(length = 250, nullable = false)
     private String title;
 
-    @Column(length = 1000, nullable = false)
+    @Column(length = 2000, nullable = false)
     private String overview;
 
     public int getId() {

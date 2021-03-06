@@ -2,6 +2,7 @@ package com.moviesaapi.movie;
 
 import com.moviesaapi.Constants;
 import com.moviesaapi.genre.GenreRepo;
+import com.moviesaapi.year.YearRepo;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
@@ -13,10 +14,12 @@ import java.util.stream.Collectors;
 public class MovieController {
     MovieRepo movieRepo;
     GenreRepo genreRepo;
+    YearRepo yearRepo;
 
-    MovieController(MovieRepo movieRepo, GenreRepo genreRepo) {
+    MovieController(MovieRepo movieRepo, GenreRepo genreRepo, YearRepo yearRepo) {
         this.movieRepo = movieRepo;
         this.genreRepo = genreRepo;
+        this.yearRepo = yearRepo;
     }
 
 

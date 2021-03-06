@@ -69,12 +69,6 @@ public class MoviesActivity extends AppCompatActivity {
 
                 unitOfWork.getMovieRepository().findAll(movies1 -> {
                     movies = movies1;
-                    if (movies.size() == 0) {
-                        Movie _movie = new Movie();
-                        _movie.setReleaseYear(years.get(0));
-                        _movie.setGenre(genres.get(0));
-                        movies.add(_movie);
-                    }
                     updateUI();
                 });
             });
@@ -86,15 +80,16 @@ public class MoviesActivity extends AppCompatActivity {
         int _moviesCount = movies.size();
         buttonMoviePrev.setEnabled(_moviesCount > 0 && activeMovieIndex > 0);
         buttonMovieNext.setEnabled(activeMovieIndex < _moviesCount - 1);
-        buttonMovieDelete.setEnabled(_moviesCount > 0);
+        buttonMovieDelete.setEnabled(_moviesCount > 0 && getCurrentMovie() != null);
         buttonMoviesSave.setEnabled(_moviesCount > 0);
+
+        int _moviesSelectedNumber = _moviesCount == 0 ? 0 : activeMovieIndex + 1;
+        textViewMoviesSelectedNumber.setText(Integer.valueOf(_moviesSelectedNumber).toString());
+        textViewMoviesCount.setText(Integer.valueOf(_moviesCount).toString());
 
         if (_moviesCount == 0) {
             return;
         }
-
-        textViewMoviesSelectedNumber.setText(Integer.valueOf(activeMovieIndex + 1).toString());
-        textViewMoviesCount.setText(Integer.valueOf(_moviesCount).toString());
 
         Movie _currentMovie = getCurrentMovie();
 
@@ -111,15 +106,18 @@ public class MoviesActivity extends AppCompatActivity {
                 .into(imageViewMoviePoster);
     }
 
-    private Movie getUIDataAsMovie() {
+    private Movie getUIDataAsMovie(boolean isNew) {
         Movie _movie = getCurrentMovie();
-        if (_movie == null) {
+        if (_movie == null || isNew) {
             _movie = new Movie();
+            _movie.setReleaseYear(years.get(spinnerMovieYear.getSelectedItemPosition()));
+            _movie.setGenre(genres.get(spinnerMovieGenre.getSelectedItemPosition()));
         }
 
         _movie.setPosterUrl(editTextMoviePosterUrl.getText().toString());
         _movie.setTitle(editTextMovieTitle.getText().toString());
         _movie.setOverview(editTextMultilineMovieOverview.getText().toString());
+
 
         return _movie;
     }
@@ -151,7 +149,7 @@ public class MoviesActivity extends AppCompatActivity {
         buttonMoviesSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Movie _currentMovie = getUIDataAsMovie();
+                Movie _currentMovie = getUIDataAsMovie(false);
                 unitOfWork.getMovieRepository().update(_currentMovie, o -> {
                     Toast.makeText(getApplicationContext(), "Saved !", Toast.LENGTH_LONG).show();
                     refresh();
@@ -173,8 +171,11 @@ public class MoviesActivity extends AppCompatActivity {
         spinnerMovieGenre.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                getCurrentMovie()
-                        .setGenre(genres.get(position));
+                Movie _movie = getCurrentMovie();
+
+                if (_movie != null) {
+                    _movie.setGenre(genres.get(position));
+                }
             }
 
             @Override
@@ -186,8 +187,11 @@ public class MoviesActivity extends AppCompatActivity {
         spinnerMovieYear.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                getCurrentMovie()
-                        .setReleaseYear(years.get(position));
+                Movie _movie = getCurrentMovie();
+
+                if (_movie != null) {
+                    _movie.setReleaseYear(years.get(position));
+                }
             }
 
             @Override
@@ -198,7 +202,7 @@ public class MoviesActivity extends AppCompatActivity {
         buttonMovieAddNew.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                unitOfWork.getMovieRepository().add(getUIDataAsMovie(), o -> {
+                unitOfWork.getMovieRepository().add(getUIDataAsMovie(true), o -> {
                     Toast.makeText(getApplicationContext(), "Added a copy as last element", Toast.LENGTH_LONG).show();
                     refresh();
                 });
