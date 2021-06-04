@@ -1,6 +1,5 @@
 package com.moviesaapi.movie;
 
-import com.moviesaapi.Constants;
 import com.moviesaapi.genre.GenreRepo;
 import com.moviesaapi.year.YearRepo;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +23,6 @@ public class MovieController {
 
 
     @GetMapping(path = "/movies", produces = "application/json")
-    @CrossOrigin(origins = Constants.ORIGINS, exposedHeaders = {Constants.EXPOSED_HEADERS})
     @ResponseBody
     public List<Movie> list(@RequestParam Optional<Integer> yearId, Optional<Integer[]> genreIds) {
         List<Movie> movies = movieRepo.findAll();
@@ -53,7 +51,6 @@ public class MovieController {
     }
 
     @GetMapping(path = "/movies/{id}", produces = "application/json")
-    @CrossOrigin(origins = Constants.ORIGINS, exposedHeaders = {Constants.EXPOSED_HEADERS})
     @ResponseBody
     public Optional<Movie> findById(@PathVariable int id) {
         return movieRepo
@@ -61,7 +58,6 @@ public class MovieController {
     }
 
     @PutMapping(path = "/movies")
-    @CrossOrigin(origins = Constants.ORIGINS, exposedHeaders = {Constants.EXPOSED_HEADERS})
     @ResponseBody
     public Movie editOrCreate(@RequestBody Movie movie) {
         movieRepo.save(movie);
@@ -69,7 +65,6 @@ public class MovieController {
     }
 
     @DeleteMapping(path = "/movies/{id}")
-    @CrossOrigin(origins = Constants.ORIGINS, exposedHeaders = {Constants.EXPOSED_HEADERS})
     public int deleteById(@PathVariable int id) {
         movieRepo.deleteById(id);
         return id;
