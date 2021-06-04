@@ -2,10 +2,12 @@ import {ReduxAction} from "../../index.typedef";
 import {
     GENRES_LOADED,
     MOVIES_LOADED,
-    SET_MOVIES_VIEW_MODE, SET_MOVIES_YEAR,
-    SET_SELECTED_GENRES_IDS, YEARS_LOADED
+    SET_MOVIES_VIEW_MODE,
+    SET_MOVIES_YEAR,
+    SET_SELECTED_GENRES_IDS,
+    YEARS_LOADED
 } from "./movies.actions";
-import {MOVIES_SORT_BY, VIEW_MODES} from "./movies.constants";
+import {VIEW_MODES} from "./movies.constants";
 
 export const initialState = {
     movies: [],
@@ -15,9 +17,8 @@ export const initialState = {
     years: [],
     isLoadingGenres: false,
     viewMode: VIEW_MODES.GRID,
-    sort_by: MOVIES_SORT_BY.VOTE_DESC,
     selectedGenresIds: [],
-    year: "all"
+    year: undefined
 };
 
 export default function moviesReducer(state = initialState, action: ReduxAction) {

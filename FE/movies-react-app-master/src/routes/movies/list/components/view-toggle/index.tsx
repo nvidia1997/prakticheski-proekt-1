@@ -1,9 +1,9 @@
 import clsx from "clsx";
 import React from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {setMoviesViewModeAction} from "../../movies.actions";
-import {VIEW_MODES} from "../../movies.constants";
-import {selectMoviesViewMode} from "../../movies.selectors";
+import {setMoviesViewModeAction} from "../../../movies.actions";
+import {VIEW_MODES} from "../../../movies.constants";
+import {selectMoviesViewMode} from "../../../movies.selectors";
 
 export default function ViewToggle() {
     const dispatch = useDispatch();

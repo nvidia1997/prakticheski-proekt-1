@@ -18,13 +18,7 @@ public class MoviesaapiApplication {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry
-                        .addMapping("/**")
-                        .allowedOrigins(
-                                "http://localhost:8080",
-                                "http://localhost:3000"
-                        )
-                .exposedHeaders("Access-Control-Allow-Origin=*");
+                registry.addMapping("/**").allowedMethods("*");
             }
         };
     }

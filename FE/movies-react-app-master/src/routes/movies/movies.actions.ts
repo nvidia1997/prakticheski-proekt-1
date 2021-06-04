@@ -86,7 +86,7 @@ export const toggleSelectedGenreIdAction = (genreId: number) => (dispatch: any, 
     return dispatch(setSelectedGenresIdsAction(_selectedGenresIds));
 };
 
-export const setMoviesYearAction = (year?: MovieYear): ReduxAction => ({
+export const setMoviesYearAction = (year?: MovieYear | "all"): ReduxAction => ({
     type: SET_MOVIES_YEAR,
-    payload: {year}
+    payload: {year: year === "all" ? undefined : year}
 });

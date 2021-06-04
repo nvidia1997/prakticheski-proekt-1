@@ -1,4 +1,5 @@
 // @ts-ignore
+import {SnackbarProvider} from "notistack";
 import React from 'react';
 // @ts-ignore
 import ReactDOM from 'react-dom';
@@ -10,14 +11,18 @@ import Routes from "./routes";
 import * as serviceWorker from './serviceWorker';
 // @ts-ignore
 import {BrowserRouter as Router} from "react-router-dom";
+import "./css/bootstrap/bootstrap.min.css";
+import "./css/index.css";
 
 ReactDOM.render(
     <React.StrictMode>
         <Router>
             <Provider store={store}>
-                <Header/>
+                <SnackbarProvider maxSnack={3} autoHideDuration={3000}>
+                    <Header/>
 
-                <Routes/>
+                    <Routes/>
+                </SnackbarProvider>
             </Provider>
         </Router>
     </React.StrictMode>,

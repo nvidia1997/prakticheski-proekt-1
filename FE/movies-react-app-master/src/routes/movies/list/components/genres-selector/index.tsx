@@ -1,11 +1,11 @@
 import React from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {toggleSelectedGenreIdAction} from "../../movies.actions";
-import {selectGenres} from "../../movies.selectors";
+import {toggleSelectedGenreIdAction} from "../../../movies.actions";
+import {selectGenres} from "../../../movies.selectors";
 
 export default function GenresSelector() {
     const dispatch = useDispatch();
-    const genres = useSelector(selectGenres) || [];
+    const genres = useSelector(selectGenres);
 
     const _onGenreToggle = (e: React.ChangeEvent, genreId: number) => {
         dispatch(toggleSelectedGenreIdAction(genreId));

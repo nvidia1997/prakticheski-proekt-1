@@ -1,7 +1,15 @@
 import React from "react";
 // @ts-ignore
 import {Route, Switch} from "react-router-dom";
-import Movies from "./movies";
+
+import Movies from "./movies/list";
+import MoviesUpsert from "./movies/upsert";
+
+import GenresList from "./genres/list";
+import GenresUpsert from "./genres/upsert";
+
+import YearsList from "./years/list";
+import YearsUpsert from "./years/upsert";
 
 
 export const ROUTE_PATHS = {
@@ -21,29 +29,37 @@ export const ROUTE_PATHS = {
 export default function Index() {
     return (
         <Switch>
-            {/*  <Route path={ROUTE_PATHS.MOVIES_EDIT()}>
-                <Movies/>
+            <Route path={ROUTE_PATHS.GENRES_EDIT()}>
+                <GenresUpsert/>
+            </Route>
+            <Route path={ROUTE_PATHS.GENRES_CREATE}>
+                <GenresUpsert/>
+            </Route>
+            <Route path={ROUTE_PATHS.GENRES_LIST}>
+                <GenresList/>
+            </Route>
+
+
+            <Route path={ROUTE_PATHS.YEARS_EDIT()}>
+                <YearsUpsert/>
+            </Route>
+            <Route path={ROUTE_PATHS.YEARS_CREATE}>
+                <YearsUpsert/>
+            </Route>
+            <Route path={ROUTE_PATHS.YEARS_LIST}>
+                <YearsList/>
+            </Route>
+
+
+            <Route path={ROUTE_PATHS.MOVIES_EDIT()}>
+                <MoviesUpsert/>
             </Route>
             <Route path={ROUTE_PATHS.MOVIES_CREATE}>
-                <Movies/>
-            </Route> */}
+                <MoviesUpsert/>
+            </Route>
             <Route path={ROUTE_PATHS.MOVIES_LIST}>
                 <Movies/>
             </Route>
-
-            {/* <Route path={ROUTE_PATHS.GENRES_EDIT()}>
-            </Route>
-            <Route path={ROUTE_PATHS.GENRES_CREATE}>
-            </Route>
-            <Route path={ROUTE_PATHS.GENRES_LIST}>
-            </Route>
-
-            <Route path={ROUTE_PATHS.YEARS_EDIT()}>
-            </Route>
-            <Route path={ROUTE_PATHS.YEARS_CREATE}>
-            </Route>
-            <Route path={ROUTE_PATHS.YEARS_LIST}>
-            </Route>*/}
         </Switch>
     );
 }
